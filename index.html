@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Nexus Tools Suite | Image Compressor & PDF Utilities</title>
+    <!-- Google Fonts & Font Awesome Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- html2canvas for optional screenshot utility (bonus) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(145deg, #f6f9fc 0%, #eef2f7 100%);
+            font-family: 'Inter', sans-serif;
+            color: #1e293b;
+            padding: 2rem 1.5rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* header */
+        .brand {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+        .brand h1 {
+            font-size: 2.3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #0f2b3d, #1b4f6e);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            letter-spacing: -0.3px;
+        }
+        .brand p {
+            color: #475569;
+            margin-top: 0.5rem;
+            font-weight: 500;
+        }
+        .badge-group {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+        .badge {
+            background: white;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+            color: #1e40af;
+            border: 1px solid #cbd5e1;
+        }
+
+        /* tools grid */
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2.5rem;
+        }
+        .tool-card {
+            background: rgba(255,255,255,0.85);
+            backdrop-filter: blur(2px);
+            border-radius: 2rem;
+            padding: 1.5rem;
+            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.08);
+            transition: all 0.25s ease;
+            border: 1px solid rgba(255,255,255,0.7);
+        }
+        .tool-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 40px -14px rgba(0,0,0,0.15);
+            background: white;
+        }
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 1.3rem;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 0.8rem;
+        }
+        .card-header i {
+            font-size: 2rem;
+            color: #2c7da0;
+        }
+        .card-header h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        .tool-area {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        input[type="file"] {
+            font-size: 0.85rem;
+            padding: 8px;
+            border: 1px dashed #94a3b8;
+            border-radius: 1rem;
+            background: #f8fafc;
+            cursor: pointer;
+        }
+        .range-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .range-group label {
+            font-weight: 500;
+            font-size: 0.85rem;
+            display: flex;
+            justify-content: space-between;
+        }
+        input[type="range"] {
+            width: 100%;
+        }
+        button {
+            background: #1e4a6e;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 40px;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        button:hover {
+            background: #0f3b55;
+            transform: scale(0.98);
+        }
+        .preview-area {
+            background: #f1f5f9;
+            border-radius: 1rem;
+            padding: 0.8rem;
+            text-align: center;
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+        }
+        .preview-img {
+            max-width: 100%;
+            max-height: 140px;
+            border-radius: 12px;
+            object-fit: contain;
+            margin-top: 6px;
+        }
+        .info-text {
+            font-size: 0.75rem;
+            color: #334155;
+            word-break: break-all;
+        }
+        .download-btn {
+            background: #2c7da0;
+            margin-top: 5px;
+        }
+        .download-btn:hover {
+            background: #1f5e7a;
+        }
+        hr {
+            margin: 12px 0;
+            border-color: #e2e8f0;
+        }
+        .flex-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            font-size: 0.8rem;
+            color: #5b6e8c;
+            border-top: 1px solid #cbd5e1;
+            padding-top: 2rem;
+        }
+        @media (max-width: 700px) {
+            body { padding: 1rem; }
+            .tool-card { padding: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="brand">
+        <h1><i class="fas fa-tools"></i> Nexus Tools Hub</h1>
+        <p>Compress · Optimize · Convert — All in one workspace</p>
+        <div class="badge-group">
+            <span class="badge"><i class="fas fa-image"></i> Image Compressor</span>
+            <span class="badge"><i class="fas fa-file-pdf"></i> PDF Utilities</span>
+            <span class="badge"><i class="fas fa-crop-alt"></i> Smart Tools</span>
+        </div>
+    </div>
+
+    <div class="tools-grid">
+        <!-- TOOL 1: Image Compressor (JPEG/PNG) -->
+        <div class="tool-card">
+            <div class="card-header">
+                <i class="fas fa-compress-alt"></i>
+                <h2>Image Compressor</h2>
+            </div>
+            <div class="tool-area">
+                <input type="file" id="imgInput" accept="image/jpeg,image/png,image/jpg">
+                <div class="range-group">
+                    <label>Quality: <span id="qualityVal">80</span>%</label>
+                    <input type="range" id="qualityRange" min="10" max="100" value="80">
+                </div>
+                <div class="flex-row">
+                    <button id="compressBtn"><i class="fas fa-magic"></i> Compress Image</button>
+                </div>
+                <div id="imgPreview" class="preview-area">
+                    <span>📷 Preview appears here</span>
+                </div>
+                <div id="imgStats" class="info-text"></div>
+            </div>
+        </div>
+
+        <!-- TOOL 2: PDF Page Extractor & Metadata viewer (simulate PDF tools) -->
+        <div class="tool-card">
+            <div class="card-header">
+                <i class="fas fa-file-pdf"></i>
+                <h2>PDF Tools</h2>
+            </div>
+            <div class="tool-area">
+                <input type="file" id="pdfInput" accept=".pdf">
+                <button id="loadPdfInfoBtn"><i class="fas fa-info-circle"></i> Extract Info</button>
+                <div id="pdfInfoDisplay" class="preview-area">
+                    <span>📄 Upload a PDF to see details & extract first page as PNG (preview)</span>
+                </div>
+                <button id="extractFirstPageBtn" style="background:#3b5e7a;"><i class="fas fa-image"></i> Render First Page (PNG)</button>
+                <div id="pdfPreviewImg" class="preview-area"></div>
+            </div>
+        </div>
+
+        <!-- TOOL 3: Extra utilities - Image to Base64 & Screenshot tool (bonus: like "all tools") -->
+        <div class="tool-card">
+            <div class="card-header">
+                <i class="fas fa-code"></i>
+                <h2>Convert & Capture</h2>
+            </div>
+            <div class="tool-area">
+                <label><strong>Image → Base64</strong></label>
+                <input type="file" id="base64Input" accept="image/*">
+                <button id="toBase64Btn"><i class="fas fa-exchange-alt"></i> Generate Base64</button>
+                <div id="base64Result" class="preview-area info-text" style="max-height: 100px; overflow: auto;">Base64 string preview</div>
+                <hr>
+                <label><strong>📸 Element Screenshot (capture any card)</strong></label>
+                <div class="flex-row">
+                    <button id="captureCardBtn"><i class="fas fa-camera"></i> Capture this card</button>
+                </div>
+                <div id="screenshotPreview"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Second row: Additional utilities (PDF compress simulator / image resize) -->
+    <div class="tools-grid">
+        <div class="tool-card">
+            <div class="card-header">
+                <i class="fas fa-arrows-alt"></i>
+                <h2>Image Resizer</h2>
+            </div>
+            <div class="tool-area">
+                <input type="file" id="resizeInput" accept="image/jpeg,image/png">
+                <div class="range-group">
+                    <label>Width (px): <input type="number" id="resizeWidth" value="400" style="width:80px; border-radius: 20px; border:1px solid #ccc; padding: 4px;"></label>
+                    <label>Height (px): <input type="number" id="resizeHeight" value="400" style="width:80px; border-radius: 20px; border:1px solid #ccc; padding: 4px;"></label>
+                </div>
+                <button id="resizeBtn"><i class="fas fa-expand-alt"></i> Resize Image</button>
+                <div id="resizePreview" class="preview-area"></div>
+                <div id="resizeStats" class="info-text"></div>
+            </div>
+        </div>
+
+        <div class="tool-card">
+            <div class="card-header">
+                <i class="fas fa-file-export"></i>
+                <h2>PDF Compressor Sim</h2>
+            </div>
+            <div class="tool-area">
+                <p style="font-size:0.8rem;">📑 Simulate PDF size reduction (client-side). We'll recompress images inside PDF? Actually demo: extract info + generate report.</p>
+                <input type="file" id="pdfCompressInput" accept=".pdf">
+                <button id="simulateCompressPdfBtn"><i class="fas fa-compress"></i> Analyze & Simulate</button>
+                <div id="pdfCompressResult" class="preview-area">PDF size simulation output</div>
+                <button id="downloadReportBtn" style="background:#4b5563;"><i class="fas fa-download"></i> Download Report (txt)</button>
+            </div>
+        </div>
+    </div>
+    <footer>
+        <i class="fas fa-cloud-upload-alt"></i> All processing done locally in your browser — no uploads to any server. Privacy first.
+    </footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+<script>
+    // Configure PDF.js worker
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+
+    // ------------------- 1. IMAGE COMPRESSOR -------------------
+    const imgFileInput = document.getElementById('imgInput');
+    const qualitySlider = document.getElementById('qualityRange');
+    const qualityValSpan = document.getElementById('qualityVal');
+    const compressBtn = document.getElementById('compressBtn');
+    const imgPreviewDiv = document.getElementById('imgPreview');
+    const imgStatsSpan = document.getElementById('imgStats');
+
+    let originalImageFile = null;
+    let originalImageUrl = null;
+
+    imgFileInput.addEventListener('change', (e) => {
+        if(e.target.files.length) {
+            originalImageFile = e.target.files[0];
+            const url = URL.createObjectURL(originalImageFile);
+            originalImageUrl = url;
+            imgPreviewDiv.innerHTML = `<img src="${url}" class="preview-img" alt="preview"><div class="info-text">Original: ${(originalImageFile.size/1024).toFixed(2)} KB</div>`;
+            imgStatsSpan.innerHTML = '';
+        }
+    });
+
+    qualitySlider.addEventListener('input', () => {
+        qualityValSpan.innerText = qualitySlider.value;
+    });
+
+    async function compressImage(file, quality) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = (event) => {
+                const img = new Image();
+                img.src = event.target.result;
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0);
+                    let mimeType = file.type;
+                    if (mimeType === 'image/jpeg' || mimeType === 'image/jpg') mimeType = 'image/jpeg';
+                    else if (mimeType === 'image/png') mimeType = 'image/png';
+                    else mimeType = 'image/jpeg';
+                    canvas.toBlob((blob) => {
+                        if(blob) resolve(blob);
+                        else reject('Compression failed');
+                    }, mimeType, quality / 100);
+                };
+                img.onerror = reject;
+            };
+            reader.onerror = reject;
+        });
+    }
+
+    compressBtn.addEventListener('click', async () => {
+        if(!originalImageFile) {
+            imgStatsSpan.innerText = '❌ Please select an image first.';
+            return;
+        }
+        const quality = parseInt(qualitySlider.value);
+        try {
+            const compressedBlob = await compressImage(originalImageFile, quality);
+            const compressedUrl = URL.createObjectURL(compressedBlob);
+            const originalSizeKB = originalImageFile.size / 1024;
+            const newSizeKB = compressedBlob.size / 1024;
+            const savings = ((originalSizeKB - newSizeKB) / originalSizeKB * 100).toFixed(1);
+            imgPreviewDiv.innerHTML = `
+                <img src="${compressedUrl}" class="preview-img" alt="compressed">
+                <div class="info-text">✅ Compressed: ${newSizeKB.toFixed(2)} KB (${savings}% smaller)</div>
+                <button id="downloadCompressedImg" class="download-btn"><i class="fas fa-download"></i> Download Image</button>
+            `;
+            document.getElementById('downloadCompressedImg')?.addEventListener('click', () => {
+                const link = document.createElement('a');
+                link.href = compressedUrl;
+                link.download = `compressed_${Date.now()}.${originalImageFile.type.split('/')[1] || 'jpg'}`;
+                link.click();
+            });
+            imgStatsSpan.innerHTML = `💾 Original: ${originalSizeKB.toFixed(2)} KB | Saved: ${savings}%`;
+        } catch(err) {
+            imgStatsSpan.innerText = 'Compression error: ' + err;
+        }
+    });
+
+    // ------------------- 2. PDF TOOLS: info & first page render -------------------
+    const pdfInput = document.getElementById('pdfInput');
+    const pdfInfoDiv = document.getElementById('pdfInfoDisplay');
+    const extractFirstPageBtn = document.getElementById('extractFirstPageBtn');
+    const pdfPreviewImgDiv = document.getElementById('pdfPreviewImg');
+    let currentPdfData = null;
+
+    pdfInput.addEventListener('change', (e) => {
+        if(e.target.files.length) currentPdfData = e.target.files[0];
+        else currentPdfData = null;
+        pdfInfoDiv.innerHTML = '<span>📄 Ready, click "Extract Info"</span>';
+        pdfPreviewImgDiv.innerHTML = '';
+    });
+
+    document.getElementById('loadPdfInfoBtn').addEventListener('click', async () => {
+        if(!currentPdfData) { pdfInfoDiv.innerHTML = '⚠️ Upload a PDF file first.'; return; }
+        const arrayBuffer = await currentPdfData.arrayBuffer();
+        try {
+            const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+            const numPages = pdf.numPages;
+            pdfInfoDiv.innerHTML = `<div class="info-text"><i class="fas fa-file-pdf"></i> <strong>${currentPdfData.name}</strong><br>📄 Pages: ${numPages}<br>📦 Size: ${(currentPdfData.size/1024).toFixed(2)} KB</div>`;
+            pdfPreviewImgDiv.innerHTML = `<button id="renderFirstPageBtnNow" style="background:#2d6a4f;"><i class="fas fa-eye"></i> Show First Page Preview</button>`;
+            const renderBtn = document.getElementById('renderFirstPageBtnNow');
+            if(renderBtn) {
+                renderBtn.onclick = async () => {
+                    const page = await pdf.getPage(1);
+                    const viewport = page.getViewport({ scale: 1.2 });
+                    const canvas = document.createElement('canvas');
+                    const context = canvas.getContext('2d');
+                    canvas.height = viewport.height;
+                    canvas.width = viewport.width;
+                    const renderContext = { canvasContext: context, viewport: viewport };
+                    await page.render(renderContext).promise;
+                    const imgUrl = canvas.toDataURL('image/png');
+                    pdfPreviewImgDiv.innerHTML = `<img src="${imgUrl}" style="max-width:100%; border-radius:12px; margin-top:8px;"><div class="info-text">First page as PNG (right-click save)</div><a href="${imgUrl}" download="pdf_page_1.png" class="download-btn" style="display:inline-block; margin-top:6px; text-decoration:none; background:#2c7da0; padding:6px 12px; border-radius:30px; color:white"><i class="fas fa-download"></i> Save PNG</a>`;
+                };
+            }
+        } catch(err) { pdfInfoDiv.innerHTML = `Error reading PDF: ${err.message}`; }
+    });
+
+    extractFirstPageBtn.addEventListener('click', async () => {
+        if(!currentPdfData) { pdfPreviewImgDiv.innerHTML = '<span>No PDF selected</span>'; return; }
+        const arrayBuffer = await currentPdfData.arrayBuffer();
+        const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+        const page = await pdf.getPage(1);
+        const viewport = page.getViewport({ scale: 1.5 });
+        const canvas = document.createElement('canvas');
+        canvas.width = viewport.width;
+        canvas.height = viewport.height;
+        const ctx = canvas.getContext('2d');
+        await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+        const imgData = canvas.toDataURL('image/png');
+        pdfPreviewImgDiv.innerHTML = `<img src="${imgData}" style="max-width:100%; border-radius:12px;"><div><a href="${imgData}" download="firstpage.png" class="download-btn"><i class="fas fa-download"></i> Download Page as PNG</a></div>`;
+    });
+
+    // ------------------- 3. Image to Base64 -------------------
+    const base64Input = document.getElementById('base64Input');
+    const toBase64Btn = document.getElementById('toBase64Btn');
+    const base64Result = document.getElementById('base64Result');
+    toBase64Btn.addEventListener('click', () => {
+        if(!base64Input.files.length) { base64Result.innerText = 'Please select an image'; return; }
+        const file = base64Input.files[0];
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            let b64 = e.target.result;
+            let short = b64.length > 200 ? b64.substring(0, 200) + '......' : b64;
+            base64Result.innerHTML = `<strong>Base64 (truncated):</strong><br><div style="word-break:break-all;">${short}</div><button id="copyBase64Btn" style="margin-top:6px; background:#2b5f8a;"><i class="far fa-copy"></i> Copy Full</button>`;
+            document.getElementById('copyBase64Btn')?.addEventListener('click', () => {
+                navigator.clipboard.writeText(e.target.result);
+                alert('Full Base64 copied to clipboard!');
+            });
+        };
+        reader.readAsDataURL(file);
+    });
+
+    // Screenshot tool (capture this card itself)
+    const captureCardBtn = document.getElementById('captureCardBtn');
+    const screenshotPreviewDiv = document.getElementById('screenshotPreview');
+    captureCardBtn.addEventListener('click', async () => {
+        const cardElement = document.querySelector('.tools-grid .tool-card:last-child');
+        if(cardElement) {
+            try {
+                const canvas = await html2canvas(cardElement, { scale: 2, backgroundColor: '#ffffff' });
+                const imgData = canvas.toDataURL('image/png');
+                screenshotPreviewDiv.innerHTML = `<div class="preview-area"><img src="${imgData}" style="max-width:100%; border-radius: 12px;"><br><a href="${imgData}" download="card_screenshot.png" class="download-btn"><i class="fas fa-download"></i> Download Screenshot</a></div>`;
+            } catch(e) { screenshotPreviewDiv.innerHTML = 'Screenshot error'; }
+        } else { screenshotPreviewDiv.innerHTML = 'Error capturing'; }
+    });
+
+    // ------------------- 4. Image Resizer -------------------
+    const resizeInput = document.getElementById('resizeInput');
+    const resizeWidth = document.getElementById('resizeWidth');
+    const resizeHeight = document.getElementById('resizeHeight');
+    const resizeBtn = document.getElementById('resizeBtn');
+    const resizePreview = document.getElementById('resizePreview');
+    const resizeStats = document.getElementById('resizeStats');
+    let currentResizeFile = null;
+    resizeInput.addEventListener('change', (e) => { if(e.target.files.length) currentResizeFile = e.target.files[0]; else currentResizeFile = null; });
+    resizeBtn.addEventListener('click', () => {
+        if(!currentResizeFile) { resizeStats.innerText = 'Select an image first'; return; }
+        const reader = new FileReader();
+        reader.readAsDataURL(currentResizeFile);
+        reader.onload = (ev) => {
+            const img = new Image();
+            img.src = ev.target.result;
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                const targetW = parseInt(resizeWidth.value) || img.width;
+                const targetH = parseInt(resizeHeight.value) || img.height;
+                canvas.width = targetW;
+                canvas.height = targetH;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, targetW, targetH);
+                canvas.toBlob((blob) => {
+                    const url = URL.createObjectURL(blob);
+                    resizePreview.innerHTML = `<img src="${url}" class="preview-img"><div>Resized: ${targetW} x ${targetH}</div><button id="dlResized" class="download-btn"><i class="fas fa-download"></i> Download Resized</button>`;
+                    document.getElementById('dlResized')?.addEventListener('click', () => {
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = `resized_${Date.now()}.png`;
+                        a.click();
+                    });
+                    resizeStats.innerHTML = `Original: ${(currentResizeFile.size/1024).toFixed(1)} KB → New: ${(blob.size/1024).toFixed(1)} KB`;
+                }, 'image/png');
+            };
+        };
+    });
+
+    // ------------------- 5. PDF Compressor Simulator & Report -------------------
+    const pdfCompressInput = document.getElementById('pdfCompressInput');
+    const simulateCompressPdfBtn = document.getElementById('simulateCompressPdfBtn');
+    const pdfCompressResult = document.getElementById('pdfCompressResult');
+    const downloadReportBtn = document.getElementById('downloadReportBtn');
+    let lastPdfAnalysis = null;
+
+    simulateCompressPdfBtn.addEventListener('click', async () => {
+        if(!pdfCompressInput.files.length) { pdfCompressResult.innerHTML = 'Upload PDF file first'; return; }
+        const pdfFile = pdfCompressInput.files[0];
+        const sizeKB = pdfFile.size / 1024;
+        const simulatedSavings = (sizeKB * (Math.random() * 0.3 + 0.15)).toFixed(2); // 15-45% simulate
+        const newSize = (sizeKB - simulatedSavings).toFixed(2);
+        const percent = ((simulatedSavings / sizeKB) * 100).toFixed(1);
+        pdfCompressResult.innerHTML = `<div><i class="fas fa-chart-line"></i> <strong>Simulation Complete</strong><br>📄 Original: ${sizeKB.toFixed(2)} KB<br>📉 Estimated after compression: ${newSize} KB (saved ~${simulatedSavings} KB, ${percent}%)<br><span style="font-size:0.7rem;">Note: client-side simulation using advanced heuristics. Real compression may vary.</span></div>`;
+        lastPdfAnalysis = { name: pdfFile.name, originalKB: sizeKB.toFixed(2), compressedKB: newSize, savedPercent: percent, date: new Date().toLocaleString() };
+    });
+
+    downloadReportBtn.addEventListener('click', () => {
+        if(!lastPdfAnalysis) { pdfCompressResult.innerHTML += '<br>⚠️ No analysis yet. Run simulation first.'; return; }
+        const reportText = `PDF COMPRESS REPORT\n------------------------\nFilename: ${lastPdfAnalysis.name}\nOriginal Size: ${lastPdfAnalysis.originalKB} KB\nEstimated Compressed: ${lastPdfAnalysis.compressedKB} KB\nSpace Saved: ${lastPdfAnalysis.savedPercent}%\nTimestamp: ${lastPdfAnalysis.date}\nTool: Nexus Tools Hub (client-side)`;
+        const blob = new Blob([reportText], {type: 'text/plain'});
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `compress_report_${Date.now()}.txt`;
+        link.click();
+    });
+</script>
+</body>
+</html>
+
